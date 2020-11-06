@@ -1,0 +1,22 @@
+#장면 분할 API에 필요한 요청 본문에 파라미터 작성 필요
+'''[HTTP Request Header]
+
+Content-Type:multipart/form-data; boundary=----[파일 구분자 문자열]
+
+[HTTP Request Body]
+------[파일 구분자 문자열]
+Content-Disposition:form-data; name="json"
+{"request_id": "reserved field", "access_key": "YOUR_ACCESS_KEY", "argument":{} }
+
+------[파일 구분자 문자열]
+Content-Disposition: form-data; name="uploadfile"; filename="[파일 명]"
+Content-Type: [파일 타입]
+
+
+[파일의 Byte 문자열]
+------[파일 구분자 문자열]--'''
+
+#파라미터 설명
+#field명     / type / 필수 여부 / 설명
+#json       /String/ 필수     / API 사용을 위해 ETRI에서 발급한 사용자 API정보가 포함된 json 문자열
+#uploadfile / File / 필수     /API 사용 요청 시 분석을 위해 전달할 비디오 파일
