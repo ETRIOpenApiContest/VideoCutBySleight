@@ -32,7 +32,7 @@ print("[responseCode]" + str(response.status))
 print("[responseBody]")
 print(response.data)
 
-time.sleep(60)
+time.sleep(30)
 
 URL = openApiURL + '/status'
 file_id = json.loads(response.data.decode())["return_object"]["file_id"]
