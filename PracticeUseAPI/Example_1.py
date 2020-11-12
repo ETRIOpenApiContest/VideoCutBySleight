@@ -2,7 +2,7 @@ import urllib3
 import json
 import os
 import time
-import cv2
+import cv2 as cv
 import numpy as np
 
 openApiURL = "http://aiopen.etri.re.kr:8000/VideoParse" #API호출
@@ -59,5 +59,5 @@ print("[responseBody]")
 print(response1.data) #장면분할 결과 출력
 
 #############동영상 처리################
-openVideo = cv2.VideoCapture(videoFilePath)
+openVideo = cv.VideoCapture(videoFilePath)
 frame = json.loads(response1.data.decode())
