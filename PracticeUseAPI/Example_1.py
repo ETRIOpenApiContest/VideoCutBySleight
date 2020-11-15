@@ -1,9 +1,9 @@
 from typing import Type
 import urllib3
-import json
 import os
 import time
 import base64
+import json
 import moviepy.editor as mp
 from pydub import AudioSegment
 
@@ -36,6 +36,9 @@ response = http.request( #API서버에 요청
 print("[responseCode]" + str(response.status)) #응답코드 출력
 print("[responseBody]")
 print(response.data) #파일 ID 출력
+# json파일 형식으로 다운로드
+with open("fileId.json", "w") as json_file:
+  json.dumps(response.data, json_file)
 
 time.sleep(30) #통신하는 시간 딜레이 설정
 
@@ -61,6 +64,9 @@ response1 = http1.request( #API서버에 통신
 print("[responseCode]" + str(response1.status)) #응답 코드 출력
 print("[responseBody]") 
 print(response1.data) #장면분할 결과 출력
+# json파일 형식으로 다운로드
+with open("divideResult.json", "w") as json_file:
+  json.dumps(response1.data, json_file)
 
 # audio path, language, API
 languageCode = "korean"
@@ -109,6 +115,8 @@ response = http.request(
 
 print("[responseCode] " + str(response.status))
 print("[responBody")
-print(str(response.data, "utf-8"))
-
+print(str(response.data, "utf-8")) 
+# json파일 형식으로 다운로드
+with open("audio_file.json", "w") as json_file: 
+  json.dumps(response.data, json_file) 
 
