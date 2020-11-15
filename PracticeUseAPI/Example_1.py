@@ -1,13 +1,17 @@
+from typing import Type
 import urllib3
 import json
 import os
 import time
-import cv2 as cv
-import numpy as np
+import base64
+import moviepy.editor as mp
+from pydub import AudioSegment
 
 openApiURL = "http://aiopen.etri.re.kr:8000/VideoParse" #API호출
 accessKey = "16f35e3e-b273-4953-9366-4c7d68128530" #API접근 Key
-videoFilePath = "/Users/sunkyu/Documents/ETRIOpenApiContest/PracticeUseAPI/videoplayback.mp4" #파일 주소
+path = "/Users/sunkyu/Documents/ETRIOpenApiContest/PracticeUseAPI/videoplayback.mp4" #파일 주소
+video = '/videoplayback.mp4'
+videoFilePath = path + video
 
 file = open(videoFilePath,'rb')#파일 열기 (이진파일 읽기 권한부여)
 fileContent = file.read()
@@ -58,6 +62,53 @@ print("[responseCode]" + str(response1.status)) #응답 코드 출력
 print("[responseBody]") 
 print(response1.data) #장면분할 결과 출력
 
-#############동영상 처리################
-openVideo = cv.VideoCapture(videoFilePath)
-frame = json.loads(response1.data.decode())
+# audio path, language, API
+languageCode = "korean"
+audio = "/movie4/wav"
+audioFilePath = path + audio
+openApiURL =  "http://aiopen.etri.re.kr:8000/WiseASR/Recognition"
+
+# movie to audio
+clip = mp.VideoFileClip(videoFilePath)
+clip.audio.write_audiofile(audioFilePath)
+
+# audio
+sound = AudioSegment.from_file(audioFilePath)
+
+# 일단 앞의 5초 나누기 
+split_point = 5000
+splits = sound[:split_point]
+
+# create a new split audio file
+split_audio_name = "/s1.wav"
+split_audio_path = path + split_audio_name
+
+# audio split
+splits.export(split_audio_path, format="wav")
+
+# 음성인식 API 시작 앞에 5초만 나눈 오디오로 함
+file = open(split_audio_path, "rb")
+audioContents = base64.b64encode(file.read()).decode("utf8")
+file.close()
+
+requestJson = {
+  "acces_key": accessKey,
+  "argument": {
+    "language_code": languageCode,
+    "audio": audioContents
+  }
+}
+
+http = urllib3.PoolManager()
+response = http.request(
+  "POST",
+  openApiURL,
+  headers={"Content-Type": "application/json; charset=UTF-8"},
+  body = json.dumps(requestJson)
+)
+
+print("[responseCode] " + str(response.status))
+print("[responBody")
+print(str(response.data, "utf-8"))
+
+
